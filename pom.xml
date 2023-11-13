@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>MongoDB-Library</artifactId>
+    <artifactId>OracleSQL-Library</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>demo1</name>
     <packaging>war</packaging>
