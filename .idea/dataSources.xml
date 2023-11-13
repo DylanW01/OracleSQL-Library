@@ -8,11 +8,12 @@
       <jdbc-url>mongodb://localhost:27017</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@localhost [2]" uuid="cce6929b-caeb-42dc-a894-8dc87b231982">
-      <driver-ref>mongo</driver-ref>
+    <data-source source="LOCAL" name="UOGDB" uuid="71495a17-03a2-4e2b-8586-69761f1bd296">
+      <driver-ref>oracle.19</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
-      <jdbc-url>mongodb://localhost:27017</jdbc-url>
+      <auto-commit>false</auto-commit>
+      <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
+      <jdbc-url>jdbc:oracle:thin:@//oracle.glos.ac.uk:1521/orclpdb.chelt.local</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
