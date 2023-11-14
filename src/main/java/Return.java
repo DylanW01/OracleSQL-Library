@@ -1,6 +1,7 @@
 import EJB.BookBean;
-import EJB.LoanBean;
+import EJB.LoanOracleBean;
 import EJB.FineBean;
+import Objects.loanModel;
 import com.google.gson.Gson;
 import com.mongodb.client.AggregateIterable;
 import jakarta.ejb.EJB;
@@ -20,7 +21,7 @@ import java.util.List;
 @WebServlet(name = "Return", value = "/return")
 public class Return extends HttpServlet {
     @EJB
-    LoanBean loanBean;
+    LoanOracleBean loanBean;
     @EJB
     BookBean bookBean;
     @EJB
@@ -31,15 +32,11 @@ public class Return extends HttpServlet {
         response.setContentType("application/json");
 
         PrintWriter out = response.getWriter();
-        AggregateIterable<Document> result = loanBean.getActiveLoans();
-
-        // Iterate through the aggregateIterable and store the documents in a list
-        List<Document> documents = new ArrayList<>();
-        result.into(documents);
+        ArrayList<loanModel> result = loanBean.getActiveLoans();
 
         // Convert the list of documents to a JSON array
         Gson gson = new Gson();
-        String jsonArray = gson.toJson(documents);
+        String jsonArray = gson.toJson(result);
 
         out.print(jsonArray);
         out.flush();
