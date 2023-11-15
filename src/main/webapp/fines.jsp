@@ -9,7 +9,7 @@
     <link href="./Assets/css/sb-admin-2.min.css" rel="stylesheet">
     <title>Library - Fines</title>
     <script>
-        fetch("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/fines").then(
+        fetch("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/fines").then(
             res => {
                 res.json().then(
                     data => {
@@ -18,15 +18,15 @@
                             var temp = "";
                             data.forEach((itemData) => {
                                 temp += "<tr>";
-                                temp += "<td>" + itemData.id + "</td>";
-                                temp += "<td>" + itemData.fine_amount + "</td>";
-                                temp += "<td>" + itemData.fine_date + "</td>";
-                                temp += "<td>" + itemData.paid + "</td>";
-                                temp += "<td>" + itemData.bookData.Title + "</td>";
-                                temp += "<td>" + itemData.bookData.Author + "</td>";
-                                temp += "<td>" + itemData.loanData.return_by + "</td>";
-                                temp += "<td>" + itemData.loanData.return_date + "</td>";
-                                temp += "<td>" + itemData.userData.name + "</td>";
+                                temp += "<td>" + itemData.FineId + "</td>";
+                                temp += "<td>£" + itemData.FineAmount + "</td>";
+                                temp += "<td>" + itemData.FineDate + "</td>";
+                                temp += "<td>" + itemData.Paid + "</td>";
+                                temp += "<td>" + itemData.BookTitle + "</td>";
+                                temp += "<td>" + itemData.AuthorFirstName + " " + itemData.AuthorLastName + "</td>";
+                                temp += "<td>" + itemData.ReturnBy + "</td>";
+                                temp += "<td>" + itemData.ReturnedOn + "</td>";
+                                temp += "<td>" + itemData.UserFirstName + " " + itemData.UserLastName + "</td>";
 
                             });
                             document.getElementById('data').innerHTML = temp;

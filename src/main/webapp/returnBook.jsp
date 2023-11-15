@@ -16,12 +16,12 @@
                 loanId: loanId,
                 bookId: bookId
             };
-            $.post("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/return", body, (data, status) => {
+            $.post("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/return", body, (data, status) => {
                 console.log(data);
                 location.reload();
             });
         }
-        fetch("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/return").then(
+        fetch("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/return").then(
             res => {
                 res.json().then(
                     data => {
@@ -30,11 +30,11 @@
                             var temp = "";
                             data.forEach((itemData) => {
                                 temp += "<tr>";
-                                temp += "<td>" + itemData.id + "</td>";
-                                temp += "<td>" + itemData.bookData.Title + "</td>";
-                                temp += "<td>" + itemData.bookData.Author + "</td>";
-                                temp += "<td>" + itemData.userData.name + "</td>";
-                                temp += `<td><button onclick="returnBook('`+itemData.id+`','`+itemData.bookData.id+`')">Return Book</button></td>`;
+                                temp += "<td>" + itemData.LoanId + "</td>";
+                                temp += "<td>" + itemData.BookTitle + "</td>";
+                                temp += "<td>" + itemData.AuthorFirstName + " " + itemData.AuthorLastName + "</td>";
+                                temp += "<td>" + itemData.UserFirstName + " " + itemData.UserLastName + "</td>";
+                                temp += `<td><button onclick="returnBook('`+itemData.LoanId+`','`+itemData.BookId+`')">Return Book</button></td>`;
                             });
                             document.getElementById('data').innerHTML = temp;
                             $('#dataTable').DataTable();

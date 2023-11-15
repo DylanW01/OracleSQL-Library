@@ -10,14 +10,14 @@
     <title>Library - Loan History</title>
     <!-- Get Books -->
     <script>
-        fetch("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/users").then(
+        fetch("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/users").then(
             res => {
                 res.json().then(
                     data => {
                         if (data.length > 0) {
                             var temp = "<option disabled selected>Select a user</option>";
                             data.forEach((itemData) => {
-                                temp += "<option value='"+itemData.Id+"'>" + itemData.Name + " - (" + itemData.Email + ")</option>";
+                                temp += "<option value='"+itemData.UserId+"'>" + itemData.First_Name + " " + itemData.Last_Name + " - (" + itemData.Email + ")</option>";
                             });
                             document.getElementById('users').innerHTML = temp;
                         }
@@ -161,7 +161,7 @@
     document.getElementById("submitbtn").addEventListener("click", function() {
         const customerId = document.getElementById("users").value
         const date = document.getElementById("monthFilter").value
-        fetch(`http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/loan-report?id=`+customerId+`&date=`+date).then(
+        fetch(`http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/loan-report?id=`+customerId+`&date=`+date).then(
             res => {
                 res.json().then(
                     data => {

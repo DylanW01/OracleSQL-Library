@@ -14,12 +14,12 @@
             const body = {
                 fineId: fineId
             };
-            $.post("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/fines", body, (data, status) => {
+            $.post("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/fines", body, (data, status) => {
                 console.log(data);
                 location.reload();
             });
         }
-        fetch("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/unpaidFines").then(
+        fetch("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/unpaidFines").then(
             res => {
                 res.json().then(
                     data => {
@@ -28,13 +28,13 @@
                             var temp = "";
                             data.forEach((itemData) => {
                                 temp += "<tr>";
-                                temp += "<td>" + itemData.id + "</td>";
-                                temp += "<td>£" + itemData.fine_amount + "</td>";
-                                temp += "<td>" + itemData.fine_date + "</td>";
-                                temp += "<td>" + itemData.loanData.return_by + "</td>";
-                                temp += "<td>" + itemData.loanData.return_date + "</td>";
-                                temp += "<td>" + itemData.userData.name + "</td>";
-                                temp += `<td><button onclick="payFine('`+itemData.id+`')">Mark as paid</button></td>`;
+                                temp += "<td>" + itemData.FineId + "</td>";
+                                temp += "<td>£" + itemData.FineAmount + "</td>";
+                                temp += "<td>" + itemData.FineDate + "</td>";
+                                temp += "<td>" + itemData.ReturnBy + "</td>";
+                                temp += "<td>" + itemData.ReturnedOn + "</td>";
+                                temp += "<td>" + itemData.UserFirstName + " " + itemData.UserLastName + "</td>";
+                                temp += `<td><button onclick="payFine('`+itemData.FineId+`')">Mark as paid</button></td>`;
 
                             });
                             document.getElementById('data').innerHTML = temp;

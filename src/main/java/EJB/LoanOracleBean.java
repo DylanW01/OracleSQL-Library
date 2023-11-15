@@ -117,10 +117,10 @@ public class LoanOracleBean {
                 "b.PAGES PAGES," +
                 "a.FIRST_NAME AUTHOR_FIRST_NAME," +
                 "a.LAST_NAME AUTHOR_LAST_NAME FROM loans l " +
-                "WHERE l.returned = 0 " +
                 "INNER JOIN library_users u ON l.user_id = u.user_id " +
                 "INNER JOIN books b ON b.book_id = l.book_id " +
-                "INNER JOIN authors a ON b.author_id = a.author_id";
+                "INNER JOIN authors a ON b.author_id = a.author_id " +
+                "WHERE l.returned = 0";
         ArrayList loans_list = new ArrayList();
         Statement stmt = null;
 
@@ -128,6 +128,8 @@ public class LoanOracleBean {
             Connection con = oracleClientProviderBean.getOracleClient();
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
+
+            System.out.println(rs);
 
             while (rs.next()) {
                 loanModel loan = new loanModel();
