@@ -19,34 +19,27 @@ public class LoanOracleBean {
     @EJB
     OracleClientProviderBean oracleClientProviderBean;
 
-    public void createLoan(loanModel loan) {
+   public void createLoan(loanModel loan) {
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-
         calendar.add(Calendar.DAY_OF_MONTH, 14);
-
         Date dateAfterTwoWeeks = calendar.getTime();
-        Date test = new java.sql.Date(dateAfterTwoWeeks.getTime());
 
-        String insertLoan = "INSERT INTO loans"
-                + "(book_id, user_id, return_by, returned)" + "VALUES ("
-                + "'" + loan.getBookId() + "',"
-                + "'" + loan.getUserId() + "',"
-                + "'" + test + "',"
-                + "0,";
+        String insertLoan = "INSERT INTO loans (book_id, user_id, return_by, returned) VALUES (?, ?, ?, 0)";
 
-        Statement stmt = null;
-        try {
-            Connection con = oracleClientProviderBean.getOracleClient();
-            stmt = con.createStatement();
+        try (Connection con = oracleClientProviderBean.getOracleClient();
+             PreparedStatement preparedStatement = con.prepareStatement(insertLoan)) {
 
-            System.out.println(insertLoan);
+            preparedStatement.setLong(1, loan.getBookId());
+            preparedStatement.setLong(2, loan.getUserId());
+            preparedStatement.setDate(3, new java.sql.Date(dateAfterTwoWeeks.getTime()));
 
-            stmt.executeUpdate(insertLoan);
+            System.out.println(preparedStatement); // For debugging purposes
 
-            stmt.close();
-        } catch(SQLException e) {
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -43,12 +43,10 @@ public class Loans extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-
         loanModel loan = new loanModel();
-        out.print("Creating Loan");
-        out.print(request.getParameter("users"));
-        out.print(request.getParameter("books"));
+        out.println("Loan Created. <a href=\"http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/newloan.jsp\">Click Here</a> to go back");
         loan.setUserId((long) Integer.parseInt(request.getParameter("users")));
         loan.setBookId((long) Integer.parseInt(request.getParameter("books")));
         loanBean.createLoan(loan);
