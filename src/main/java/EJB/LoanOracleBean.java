@@ -27,11 +27,13 @@ public class LoanOracleBean {
         calendar.add(Calendar.DAY_OF_MONTH, 14);
 
         Date dateAfterTwoWeeks = calendar.getTime();
+        Date test = new java.sql.Date(dateAfterTwoWeeks.getTime());
+
         String insertLoan = "INSERT INTO loans"
                 + "(book_id, user_id, return_by, returned)" + "VALUES ("
                 + "'" + loan.getBookId() + "',"
                 + "'" + loan.getUserId() + "',"
-                + "'" + dateAfterTwoWeeks + "',"
+                + "'" + test + "',"
                 + "0,";
 
         Statement stmt = null;

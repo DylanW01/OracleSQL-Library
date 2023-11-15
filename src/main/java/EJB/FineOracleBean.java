@@ -191,18 +191,26 @@ public class FineOracleBean {
                 loanModel loan = (loanModel) loanObject;
                 Date returnBy = loan.getReturnBy();
                 Date returnDate = loan.getReturnedOn();
-                LocalDate returnByLocalDate = returnBy.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDate returnDateLocalDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                long daysDifference = ChronoUnit.DAYS.between(returnByLocalDate, returnDateLocalDate);
+
+                // Convert Date to java.sql.Date
+                java.sql.Date returnBySqlDate = new java.sql.Date(returnBy.getTime());
+                java.sql.Date returnDateSqlDate = new java.sql.Date(returnDate.getTime());
+
+                // Calculate the difference in days
+                long daysDifference = ChronoUnit.DAYS.between(returnBySqlDate.toLocalDate(), returnDateSqlDate.toLocalDate());
+
+                // Convert the days difference to an integer
                 int daysDifferenceInt = Math.toIntExact(daysDifference);
+
+                // Calculate the fine cost
                 double fineCost = 2.5 * daysDifferenceInt;
 
                 String insertFine = "INSERT INTO fines"
                         + "(LOAN_ID, FINE_AMOUNT, FINE_DATE, PAID)" + "VALUES ("
-                        + "'" + loanId + "',"
-                        + "'" + fineCost + "',"
+                        + loanId + ","
+                        + fineCost + ","
                         + "CURRENT_TIMESTAMP,"
-                        + "0,";
+                        + "0)";
 
                 Statement stmt2 = null;
                 try {

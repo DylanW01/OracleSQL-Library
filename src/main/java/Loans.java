@@ -47,8 +47,10 @@ public class Loans extends HttpServlet {
 
         loanModel loan = new loanModel();
         out.print("Creating Loan");
-        loan.setUserId(Integer.parseInt(request.getParameter("user_id")));
-        loan.setBookId(Integer.parseInt(request.getParameter("user_id")));
+        out.print(request.getParameter("users"));
+        out.print(request.getParameter("books"));
+        loan.setUserId((long) Integer.parseInt(request.getParameter("users")));
+        loan.setBookId((long) Integer.parseInt(request.getParameter("books")));
         loanBean.createLoan(loan);
         bookBean.markAsBorrowed(Integer.parseInt(request.getParameter("books")));
     }
