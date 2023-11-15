@@ -1,31 +1,27 @@
-import EJB.BookBean;
+import EJB.BookOracleBean;
 import EJB.LoanOracleBean;
-import EJB.FineBean;
+import EJB.FineOracleBean;
 import Objects.loanModel;
 import com.google.gson.Gson;
-import com.mongodb.client.AggregateIterable;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet(name = "Return", value = "/return")
 public class Return extends HttpServlet {
     @EJB
     LoanOracleBean loanBean;
     @EJB
-    BookBean bookBean;
+    BookOracleBean bookBean;
     @EJB
-    FineBean fineBean;
+    FineOracleBean fineBean;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,9 +43,9 @@ public class Return extends HttpServlet {
         response.setContentType("text/html");
 
         PrintWriter out = response.getWriter();
-        out.println("Book Returned. <a href=\"http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/newloan.jsp\">Click Here</a> to go back");
-        ObjectId loanId = new ObjectId(request.getParameter("loanId"));
-        String bookId = request.getParameter("bookId");
+        out.println("Book Returned. <a href=\"http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/newloan.jsp\">Click Here</a> to go back");
+        int loanId = Integer.parseInt(request.getParameter("loanId"));
+        int bookId = Integer.parseInt(request.getParameter("bookId"));
 
         // Mark loan as returned
         loanBean.returnBook(loanId);

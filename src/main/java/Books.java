@@ -1,70 +1,40 @@
-import Objects.Book;
-import EJB.BookBean;
+import Objects.bookModel;
 import com.google.gson.Gson;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
+import EJB.BookOracleBean;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 @WebServlet(name = "Books", value = "/books")
 public class Books extends HttpServlet {
     @EJB
-    BookBean bookBean;
+    BookOracleBean bookBean;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
 
         PrintWriter out = response.getWriter();
-        FindIterable<Document> foundBooks = bookBean.getBooks();
-        MongoCursor<Document> cursor = foundBooks.iterator();
+        ArrayList<bookModel> result = bookBean.getBooks();
 
-        List<Book> books = new ArrayList<Book>();
+        // Convert the list of documents to a JSON array
+        Gson gson = new Gson();
+        String jsonArray = gson.toJson(result);
 
-        try {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-
-                Book book = new Book(
-                        doc.get("_id").toString(),
-                        doc.get("Title").toString(),
-                        doc.get("Author").toString(),
-                        doc.get("ISBN").toString(),
-                        (Integer) doc.get("Pages"),
-                        (Date) doc.get("Added"),
-                        (Boolean) doc.get("OnLoan"));
-
-                books.add(book);
-            }
-        } finally {
-            cursor.close();
-        }
-
-        String booksJsonString = new Gson().toJson(books);
-        out.print(booksJsonString);
+        out.print(jsonArray);
         out.flush();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
-    public void createCustomer(Document customer) {
-
 
     }
 }

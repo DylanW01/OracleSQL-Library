@@ -10,7 +10,7 @@
     <title>Library - Books</title>
     <!-- Get Books -->
     <script>
-        fetch("http://localhost:8080/MongoDB-Library-1.0-SNAPSHOT/books").then(
+        fetch("http://localhost:8080/OracleSQL-Library-1.0-SNAPSHOT/books").then(
             res => {
                 res.json().then(
                     data => {
@@ -21,10 +21,10 @@
                             data.forEach((itemData) => {
                                 temp += "<tr>";
                                 temp += "<td>" + itemData.BookTitle + "</td>";
-                                temp += "<td>" + itemData.Author + "</td>";
-                                temp += "<td>" + itemData.ISBN + "</td>";
-                                temp += "<td>" + itemData.Pages + "</td>";
-                                temp += "<td>" + itemData.Added + "</td>";
+                                temp += "<td>" + itemData.AuthorFirstName + " " + itemData.AuthorLastName + "</td>";
+                                temp += "<td>" + itemData.BookIsbn + "</td>";
+                                temp += "<td>" + itemData.BookPages + "</td>";
+                                temp += "<td>" + itemData.Created + "</td>";
                                 if(itemData.OnLoan === false) {
                                     temp += "<td>×</td></tr>";
                                 } else {
