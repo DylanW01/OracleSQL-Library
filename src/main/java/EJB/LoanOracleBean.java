@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import oracle.jdbc.OracleTypes;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -154,25 +155,21 @@ public class LoanOracleBean {
     }
 
     public ArrayList<loanModel> getLoanReportForCustomer(int customerId, Date startDate, Date endDate) {
-        String query = "SELECT l.LOAN_ID, l.BOOK_ID, l.USER_ID, l.RETURN_BY, l.RETURNED_ON, l.RETURNED, " +
-                "u.FIRST_NAME, u.LAST_NAME, u.EMAIL, b.TITLE, b.ISBN, b.PAGES, " +
-                "a.FIRST_NAME AS AUTHOR_FIRST_NAME, a.LAST_NAME AS AUTHOR_LAST_NAME " +
-                "FROM loans l " +
-                "INNER JOIN library_users u ON l.user_id = u.user_id " +
-                "INNER JOIN books b ON b.book_id = l.book_id " +
-                "INNER JOIN authors a ON b.author_id = a.author_id " +
-                "WHERE l.USER_ID = ? AND l.RETURN_BY >= ? AND l.RETURN_BY <= ?";
+        String query = "{CALL GET_LOAN_REPORT_FOR_CUSTOMER(?, ?, ?, ?)}";
 
         ArrayList<loanModel> loansList = new ArrayList<>();
 
         try (Connection con = oracleClientProviderBean.getOracleClient();
-             PreparedStatement pstmt = con.prepareStatement(query)) {
+             CallableStatement cstmt = con.prepareCall(query)) {
 
-            pstmt.setInt(1, customerId);
-            pstmt.setObject(2, new java.sql.Date(startDate.getTime()));
-            pstmt.setObject(3, new java.sql.Date(endDate.getTime()));
+            cstmt.setInt(1, customerId);
+            cstmt.setObject(2, new java.sql.Date(startDate.getTime()));
+            cstmt.setObject(3, new java.sql.Date(endDate.getTime()));
+            cstmt.registerOutParameter(4, OracleTypes.CURSOR);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
+            cstmt.execute();
+
+            try (ResultSet rs = (ResultSet) cstmt.getObject(4)) {
                 while (rs.next()) {
                     loanModel loan = new loanModel();
                     loan.setLoanId(rs.getLong("LOAN_ID"));
