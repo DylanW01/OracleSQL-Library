@@ -169,12 +169,12 @@
                         var returnedCount = 0;
                         data.forEach((itemData) => {
                             temp += "<tr>";
-                            temp += "<td>" + itemData.id + "</td>";
-                            temp += "<td>" + itemData.returned + "</td>";
-                            temp += "<td>" + itemData.bookData.Title +" ("+itemData.bookData.Title+")"+ "</td>";
-                            temp += "<td>" + itemData.return_by + "</td>";
-                            temp += "<td>" + itemData.return_date + "</td>";
-                            if (itemData.returned === false) {
+                            temp += "<td>" + itemData.LoanId + "</td>";
+                            temp += "<td>" + itemData.Returned + "</td>";
+                            temp += "<td>" + itemData.BookTitle +" ("+itemData.AuthorFirstName+" "+itemData.AuthorLastName+")"+ "</td>";
+                            temp += "<td>" + itemData.ReturnBy + "</td>";
+                            temp += "<td>" + itemData.ReturnedOn + "</td>";
+                            if (itemData.Returned === false) {
                                 returnedCount++; // Increment the counter if 'returned' is false
                             }
                         });

@@ -205,21 +205,23 @@ public class FineOracleBean {
                 // Calculate the fine cost
                 double fineCost = 2.5 * daysDifferenceInt;
 
-                String insertFine = "INSERT INTO fines"
-                        + "(LOAN_ID, FINE_AMOUNT, FINE_DATE, PAID)" + "VALUES ("
-                        + loanId + ","
-                        + fineCost + ","
-                        + "CURRENT_TIMESTAMP,"
-                        + "0)";
+                if(fineCost > 0) {
+                    String insertFine = "INSERT INTO fines"
+                            + "(LOAN_ID, FINE_AMOUNT, FINE_DATE, PAID)" + "VALUES ("
+                            + loanId + ","
+                            + fineCost + ","
+                            + "CURRENT_TIMESTAMP,"
+                            + "0)";
 
-                Statement stmt2 = null;
-                try {
-                    stmt2 = con.createStatement();
-                    System.out.println(insertFine);
-                    stmt2.executeUpdate(insertFine);
-                    stmt2.close();
-                } catch(SQLException e) {
-                    e.printStackTrace();
+                    Statement stmt2 = null;
+                    try {
+                        stmt2 = con.createStatement();
+                        System.out.println(insertFine);
+                        stmt2.executeUpdate(insertFine);
+                        stmt2.close();
+                    } catch(SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } catch(SQLException e) {
@@ -240,44 +242,45 @@ public class FineOracleBean {
         }
     }
 
-   /* public ArrayList<fineModel> geFineReportForCustomer(ObjectId customerId, Date startDate, Date endDate) {
-        // Client
-        MongoClient mongo = mongoClientProviderBean.getMongoClient();
-        // Get DB
-        MongoDatabase db = mongo.getDatabase("library");
-        // Get loans
-        MongoCollection<Document> fines = db.getCollection("fines");
-        MongoCollection<Document> loans = db.getCollection("loans");
-        MongoCollection<Document> books = db.getCollection("books");
-        MongoCollection<Document> users = db.getCollection("users");
+    public ArrayList<fineModel> geFineReportForCustomer(int customerId, Date startDate, Date endDate) {
+        String query = "SELECT f.FINE_ID, f.FINE_AMOUNT, f.FINE_DATE, f.PAID, " +
+                "b.TITLE, u.LAST_NAME, u.FIRST_NAME, " +
+                "a.FIRST_NAME AS AUTHOR_FIRST_NAME, a.LAST_NAME AS AUTHOR_LAST_NAME " +
+                "FROM fines f " +
+                "INNER JOIN loans l ON l.LOAN_ID = f.LOAN_ID " +
+                "INNER JOIN books b ON b.BOOK_ID = l.BOOK_ID " +
+                "INNER JOIN AUTHORS a ON a.AUTHOR_ID = b.AUTHOR_ID " +
+                "INNER JOIN LIBRARY_USERS u ON u.USER_ID = l.USER_ID " +
+                "WHERE l.USER_ID = ? AND f.FINE_DATE >= ? AND f.FINE_DATE <= ?";
 
-        Bson matchStage = Aggregates.match(
-                Filters.and(
-                        Filters.eq("user_id", customerId), // Filter loans by customer ID
-                        Filters.gte("fine_date", startDate), // Filter fine_date >= startDate
-                        Filters.lte("fine_date", endDate)  // Filter fine_date <= endDate
-                )
-        );
+        ArrayList<fineModel> fineList = new ArrayList<>();
 
-        List<Bson> pipeline = Arrays.asList(
-                matchStage,
-                Aggregates.lookup("books", "book_id", "_id", "bookData"),
-                Aggregates.lookup("users", "user_id", "_id", "userData"),
+        try (Connection con = oracleClientProviderBean.getOracleClient();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
 
-                Aggregates.unwind("$bookData"),
-                Aggregates.unwind("$userData"),
-                Aggregates.project(
-                        Projections.fields(
-                                Projections.include("paid"), // Include loan-specific fields
-                                Projections.include("fine_amount"),
-                                Projections.include("fine_date"),
-                                Projections.computed("id", new Document("$toString", "$_id")), // Convert _id to a string
-                                Projections.computed("bookData.Title", "$bookData.Title"), // Include book title
-                                Projections.computed("bookData.Author", "$bookData.Author")
-                        )
-                )
-        );
-        // Execute the aggregation and return the result as an AggregateIterable<Document>
-        return fines.aggregate(pipeline);
-    }*/
+            pstmt.setInt(1, customerId);
+            pstmt.setObject(2, new java.sql.Date(startDate.getTime()));
+            pstmt.setObject(3, new java.sql.Date(endDate.getTime()));
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    fineModel fine = new fineModel();
+                    fine.setFineId(rs.getLong("FINE_ID"));
+                    fine.setFineAmount(rs.getDouble("FINE_AMOUNT"));
+                    fine.setFineDate(rs.getDate("FINE_DATE"));
+                    fine.setPaid(rs.getBoolean("PAID"));
+                    fine.setBookTitle(rs.getString("TITLE"));
+                    fine.setUserFirstName(rs.getString("FIRST_NAME"));
+                    fine.setUserLastName(rs.getString("LAST_NAME"));
+                    fine.setAuthorFirstName(rs.getString("AUTHOR_FIRST_NAME"));
+                    fine.setAuthorLastName(rs.getString("AUTHOR_LAST_NAME"));
+                    fineList.add(fine);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return fineList;
+    }
 }

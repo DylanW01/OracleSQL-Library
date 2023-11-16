@@ -1,3 +1,5 @@
+package Endpoints;
+
 import Objects.bookModel;
 import com.google.gson.Gson;
 import jakarta.ejb.EJB;

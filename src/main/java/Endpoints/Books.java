@@ -1,7 +1,9 @@
-import Objects.UserModel;
+package Endpoints;
+
+import Objects.bookModel;
 import com.google.gson.Gson;
+import EJB.BookOracleBean;
 import jakarta.ejb.EJB;
-import EJB.UserOracleBean;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,17 +14,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@WebServlet(name = "Books", value = "/users")
-public class Users extends HttpServlet {
+
+@WebServlet(name = "Books", value = "/books")
+public class Books extends HttpServlet {
     @EJB
-    UserOracleBean userBean;
+    BookOracleBean bookBean;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
 
         PrintWriter out = response.getWriter();
-        ArrayList<UserModel> result = userBean.getUsers();
+        ArrayList<bookModel> result = bookBean.getBooks();
 
         // Convert the list of documents to a JSON array
         Gson gson = new Gson();
