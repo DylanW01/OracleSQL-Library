@@ -4,6 +4,7 @@ import Objects.fineModel;
 import Objects.loanModel;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -242,27 +243,22 @@ public class FineOracleBean {
         }
     }
 
-    public ArrayList<fineModel> geFineReportForCustomer(int customerId, Date startDate, Date endDate) {
-        String query = "SELECT f.FINE_ID, f.FINE_AMOUNT, f.FINE_DATE, f.PAID, " +
-                "b.TITLE, u.LAST_NAME, u.FIRST_NAME, " +
-                "a.FIRST_NAME AS AUTHOR_FIRST_NAME, a.LAST_NAME AS AUTHOR_LAST_NAME " +
-                "FROM fines f " +
-                "INNER JOIN loans l ON l.LOAN_ID = f.LOAN_ID " +
-                "INNER JOIN books b ON b.BOOK_ID = l.BOOK_ID " +
-                "INNER JOIN AUTHORS a ON a.AUTHOR_ID = b.AUTHOR_ID " +
-                "INNER JOIN LIBRARY_USERS u ON u.USER_ID = l.USER_ID " +
-                "WHERE l.USER_ID = ? AND f.FINE_DATE >= ? AND f.FINE_DATE <= ?";
+    public ArrayList<fineModel> getFineReportForCustomer(int customerId, Date startDate, Date endDate) {
+        String query = "{CALL GET_FINE_REPORT_FOR_CUSTOMER(?, ?, ?, ?)}";
 
         ArrayList<fineModel> fineList = new ArrayList<>();
 
         try (Connection con = oracleClientProviderBean.getOracleClient();
-             PreparedStatement pstmt = con.prepareStatement(query)) {
+             CallableStatement cstmt = con.prepareCall(query)) {
 
-            pstmt.setInt(1, customerId);
-            pstmt.setObject(2, new java.sql.Date(startDate.getTime()));
-            pstmt.setObject(3, new java.sql.Date(endDate.getTime()));
+            cstmt.setInt(1, customerId);
+            cstmt.setObject(2, new java.sql.Date(startDate.getTime()));
+            cstmt.setObject(3, new java.sql.Date(endDate.getTime()));
+            cstmt.registerOutParameter(4, OracleTypes.CURSOR);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
+            cstmt.execute();
+
+            try (ResultSet rs = (ResultSet) cstmt.getObject(4)) {
                 while (rs.next()) {
                     fineModel fine = new fineModel();
                     fine.setFineId(rs.getLong("FINE_ID"));
@@ -283,4 +279,5 @@ public class FineOracleBean {
 
         return fineList;
     }
+
 }

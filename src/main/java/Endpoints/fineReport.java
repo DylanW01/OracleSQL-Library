@@ -31,7 +31,7 @@ public class fineReport extends HttpServlet {
         Date[] convertedDate = getFirstAndLastDayOfMonth(date);
 
         PrintWriter out = response.getWriter();
-        ArrayList<fineModel> result = fineBean.geFineReportForCustomer(customerId, convertedDate[0], convertedDate[1]);
+        ArrayList<fineModel> result = fineBean.getFineReportForCustomer(customerId, convertedDate[0], convertedDate[1]);
 
         Gson gson = new Gson();
         String jsonArray = gson.toJson(result);
